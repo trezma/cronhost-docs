@@ -4,6 +4,7 @@
   "name": "cronhost docs",
   "colors": {
     "primary": "#26a69a",
+    "light": "#8e44ad",
     "dark": "#8e44ad"
   },
   "favicon": "/favicon.svg",
