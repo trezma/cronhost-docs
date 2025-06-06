@@ -1,0 +1,102 @@
+---
+title: "Authentication"
+description: "Learn how to authenticate with the Cronhost API using API keys"
+---
+
+# Authentication
+
+The Cronhost API uses API key authentication. All requests must include a valid API key in the request headers.
+
+## API Key Header
+
+Include your API key in the `x-api-key` header:
+
+```http
+x-api-key: your-api-key-here
+```
+
+## Getting Your API Key
+
+1. Log in to your [Cronhost dashboard](https://cronho.st/dashboard)
+2. Navigate to [Settings](https://cronho.st/settings)
+3. Create a new API key or copy an existing one
+
+## Example Request
+
+```bash
+curl -X GET "https://cronho.st/api/v1/schedules" \
+  -H "x-api-key: your-api-key-here" \
+  -H "Content-Type: application/json"
+```
+
+## Security Best Practices
+
+- **Never expose API keys** in client-side code, public repositories, or logs
+- **Use environment variables** to store API keys in your applications
+- **Rotate keys regularly** for enhanced security
+- **Use different keys** for different environments (development, staging, production)
+- **Revoke unused keys** from your dashboard
+
+## Error Responses
+
+### Missing API Key
+
+```json
+{
+  "error": {
+    "message": "API key is required",
+    "code": "MISSING_API_KEY"
+  }
+}
+```
+
+**Status Code:** `401 Unauthorized`
+
+### Invalid API Key
+
+```json
+{
+  "error": {
+    "message": "Invalid API key",
+    "code": "INVALID_API_KEY"
+  }
+}
+```
+
+**Status Code:** `401 Unauthorized`
+
+### Expired API Key
+
+```json
+{
+  "error": {
+    "message": "API key has expired",
+    "code": "EXPIRED_API_KEY"
+  }
+}
+```
+
+**Status Code:** `401 Unauthorized`
+
+## Environment Variables
+
+Store your API key securely using environment variables:
+
+<CodeGroup>
+
+```bash .env
+CRONHOST_API_KEY=your-api-key-here
+```
+
+```javascript Node.js
+const cronhost = new Cronhost({
+  apiKey: process.env.CRONHOST_API_KEY
+});
+```
+
+```python Python
+import os
+api_key = os.environ.get('CRONHOST_API_KEY')
+```
+
+</CodeGroup>

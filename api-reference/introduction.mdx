@@ -1,0 +1,95 @@
+---
+title: 'API Introduction'
+description: 'REST API for scheduling HTTP requests with cron expressions'
+---
+
+# Cronhost REST API
+
+The Cronhost REST API allows you to programmatically manage scheduled HTTP requests using familiar cron syntax. Build integrations, automate workflows, and manage your schedules through a simple, RESTful interface.
+
+## Base URL
+
+All API requests should be made to:
+
+```
+https://cronho.st/api/v1
+```
+
+## What You Can Do
+
+With the Cronhost API, you can:
+
+- **Create schedules** to automatically execute HTTP requests on a cron schedule
+- **Manage schedules** with full CRUD operations (create, read, update, delete)
+- **Control execution** by enabling, disabling, or manually triggering schedules
+- **Monitor jobs** to track execution history, success rates, and error details
+- **Query job history** with filtering and pagination
+
+## Quick Example
+
+Here's a simple example of creating a schedule that checks an API's health every hour:
+
+```bash
+curl -X POST "https://cronho.st/api/v1/schedules" \
+  -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Hourly Health Check",
+    "description": "Check API health every hour",
+    "cronExpression": "0 * * * *",
+    "timezone": "UTC",
+    "endpoint": "https://api.example.com/health",
+    "httpMethod": "GET",
+    "maxRetries": 3,
+    "timeoutSeconds": 30
+  }'
+```
+
+## Interactive Documentation
+
+This documentation is built from our OpenAPI specification and includes:
+
+- **Live examples** you can test directly in the browser
+- **Complete request/response schemas** with validation
+- **Multiple example scenarios** for each endpoint
+- **Error response examples** to help with debugging
+
+## Core Concepts
+
+### Schedules
+A schedule defines **when** and **how** to make HTTP requests. Each schedule includes:
+- **Cron expression** for timing (e.g., `0 9 * * *` for daily at 9 AM)
+- **HTTP details** like method, endpoint, headers, and body
+- **Retry logic** with configurable attempts and timeouts
+- **Timezone support** for accurate scheduling
+
+### Jobs
+A job represents a **single execution** of a schedule. Jobs track:
+- **Execution status** (PENDING, RUNNING, SUCCESS, FAILED)
+- **HTTP response details** including status codes and response bodies
+- **Timing information** like start time, completion time, and duration
+- **Error details** for failed executions
+
+## Getting Started
+
+1. **Get your API key** from the [Cronhost dashboard](https://cronho.st/settings)
+2. **Review authentication** in the next section
+3. **Explore the endpoints** using the interactive documentation below
+4. **Try the examples** directly in your browser or with curl
+
+## Rate Limits
+
+The API has the following rate limits:
+- **100 requests per minute** per API key
+- **1000 requests per hour** per API key
+
+Rate limit headers are included in all responses:
+- `X-RateLimit-Limit`: Your rate limit ceiling
+- `X-RateLimit-Remaining`: Number of requests left in current window
+- `X-RateLimit-Reset`: UTC timestamp when the rate limit resets
+
+## Support
+
+- **Documentation issues**: [GitHub Issues](https://github.com/trezma/cronhost-docs/issues)
+- **API support**: [help@cronho.st](mailto:help@cronho.st)
+- **Status page**: [status.cronho.st](https://status.cronho.st)

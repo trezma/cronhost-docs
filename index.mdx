@@ -1,0 +1,132 @@
+---
+title: "Cronhost Documentation"
+description: "Schedule HTTP requests with cron expressions. Simple, reliable, and powerful."
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/dashboard-light.jpg"
+  alt="Cronhost Hero Light"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/dashboard-dark.jpg"
+  alt="Cronhost Hero Dark"
+/>
+
+# Welcome to Cronhost
+
+Cronhost is a powerful service for scheduling HTTP requests using familiar cron syntax. Whether you need to trigger webhooks, monitor APIs, send notifications, or automate workflows, Cronhost makes it simple and reliable.
+
+## What is Cronhost?
+
+Cronhost allows you to:
+
+- **Schedule HTTP requests** using standard cron expressions
+- **Monitor API health** with automatic retries and timeout handling
+- **Trigger webhooks** on precise schedules across any timezone
+- **Automate workflows** by calling your APIs at exactly the right time
+- **Track execution history** with detailed job logs and error reporting
+
+## Quick Example
+
+Create a schedule that checks your API health every 5 minutes:
+
+```bash
+curl -X POST "https://cronho.st/api/v1/schedules" \
+  -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "API Health Monitor",
+    "cronExpression": "*/5 * * * *",
+    "timezone": "UTC",
+    "endpoint": "https://your-api.com/health",
+    "httpMethod": "GET"
+  }'
+```
+
+## Getting Started
+
+<CardGroup cols={2}>
+  <Card title="Quickstart Guide" icon="rocket" href="/quickstart">
+    Get up and running in under 5 minutes
+  </Card>
+  <Card title="TypeScript SDK" icon="code" href="/sdk-reference/introduction">
+    Use our official TypeScript SDK for easy integration
+  </Card>
+</CardGroup>
+
+## Core Features
+
+<CardGroup cols={2}>
+  <Card
+    title="Cron Scheduling"
+    icon="clock"
+    href="/api-reference/schedule/create-schedule"
+  >
+    Use familiar cron syntax to schedule requests precisely
+  </Card>
+  <Card
+    title="Global Timezones"
+    icon="globe"
+    href="/api-reference/introduction"
+  >
+    Schedule across any timezone with IANA timezone support
+  </Card>
+  <Card
+    title="Retry Logic"
+    icon="rotate-right"
+    href="/api-reference/schedule/create-schedule"
+  >
+    Configurable retries and timeouts for reliable execution
+  </Card>
+  <Card
+    title="Job Monitoring"
+    icon="chart-line"
+    href="/api-reference/job/list-jobs"
+  >
+    Track execution history, success rates, and error details
+  </Card>
+</CardGroup>
+
+## Use Cases
+
+### API Monitoring
+
+Monitor your APIs by scheduling health checks every few minutes. Get immediate visibility into downtime and response issues.
+
+### Webhook Triggers
+
+Send scheduled webhooks to integrate with third-party services, trigger deployments, or notify external systems.
+
+### Data Processing
+
+Schedule batch jobs, data exports, report generation, or cleanup tasks to run at optimal times.
+
+### Notifications
+
+Send periodic notifications, reminders, or status updates by calling your notification APIs on schedule.
+
+## Developer Resources
+
+<CardGroup cols={3}>
+  <Card title="REST API" icon="link" href="/api-reference/introduction">
+    Complete REST API with interactive documentation
+  </Card>
+  <Card title="SDK Reference" icon="code" href="/sdk-reference/introduction">
+    TypeScript SDK with full type safety
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/quickstart">
+    Real-world examples and common patterns
+  </Card>
+</CardGroup>
+
+## Why Choose Cronhost?
+
+- **Reliable Execution**: Built on robust infrastructure with 99.9% uptime
+- **Global Scale**: Supports scheduling across all timezones worldwide
+- **Developer Friendly**: Clean APIs, comprehensive docs, and TypeScript SDK
+- **Transparent Monitoring**: Detailed execution logs and error reporting
+- **Flexible Pricing**: Pay only for what you use, starting free
+
+Ready to automate your HTTP requests? [Get started with our quickstart guide](/quickstart) or explore the [API documentation](/api-reference/introduction).

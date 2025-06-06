@@ -1,0 +1,87 @@
+---
+title: "SDK Introduction"
+description: "Official TypeScript SDK for Cronhost - schedule HTTP requests with cron expressions"
+---
+
+# SDK Introduction
+
+The Cronhost SDK is the official TypeScript library for interacting with the Cronhost API. It provides a simple and intuitive interface for managing scheduled HTTP requests using cron expressions.
+
+## Installation
+
+Install the SDK using your preferred package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install cronhost
+```
+
+```bash yarn
+yarn add cronhost
+```
+
+```bash pnpm
+pnpm add cronhost
+```
+
+```bash bun
+bun add cronhost
+```
+
+</CodeGroup>
+
+## Quick Start
+
+```typescript
+import { Cronhost } from 'cronhost';
+
+// Initialize the client
+const cronhost = new Cronhost({
+  apiKey: 'your-api-key-here',
+  baseUrl: 'https://cronho.st' // Optional, defaults to https://cronho.st
+});
+
+// Create a schedule
+const schedule = await cronhost.createSchedule({
+  name: 'Daily Health Check',
+  description: 'Check if our API is healthy every day at 9 AM',
+  cronExpression: '0 9 * * *',
+  timezone: 'America/New_York',
+  endpoint: 'https://api.example.com/health',
+  httpMethod: 'GET',
+  maxRetries: 3,
+  timeoutSeconds: 30
+});
+
+console.log('Schedule created:', schedule);
+```
+
+## Authentication
+
+All SDK methods require authentication using your API key. You can obtain your API key from the [Cronhost dashboard](https://cronho.st/settings).
+
+```typescript
+const cronhost = new Cronhost({
+  apiKey: 'your-api-key-here'
+});
+```
+
+## Error Handling
+
+The SDK throws errors for failed requests. We recommend wrapping SDK calls in try-catch blocks:
+
+```typescript
+try {
+  const schedule = await cronhost.getSchedule('schedule-id');
+  console.log('Schedule:', schedule);
+} catch (error) {
+  console.error('Error fetching schedule:', error.message);
+}
+```
+
+## Next Steps
+
+- [Schedule Management](/sdk-reference/schedules) - Learn how to create, update, and manage schedules
+- [Job Management](/sdk-reference/jobs) - Monitor and retrieve job execution details
+- [Types Reference](/sdk-reference/types) - Complete TypeScript type definitions

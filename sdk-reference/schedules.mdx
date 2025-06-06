@@ -1,0 +1,200 @@
+---
+title: "Schedule Management"
+description: "Manage scheduled HTTP requests with the Cronhost SDK"
+---
+
+# Schedule Management
+
+The Schedule Management section covers all operations related to creating, updating, and managing scheduled HTTP requests.
+
+## Get All Schedules
+
+Retrieve all schedules for the authenticated user.
+
+```typescript
+const schedules = await cronhost.getSchedules();
+```
+
+**Returns:** `Promise<Schedule[]>`
+
+## Get Schedule by ID
+
+Retrieve a specific schedule by its ID.
+
+```typescript
+const schedule = await cronhost.getSchedule("schedule-id");
+```
+
+**Parameters:**
+
+- `id` (string, required): The unique identifier of the schedule
+
+**Returns:** `Promise<Schedule>`
+
+## Create Schedule
+
+Create a new scheduled HTTP request.
+
+```typescript
+const schedule = await cronhost.createSchedule({
+  name: "Daily Health Check",
+  description: "Check if our API is healthy every day at 9 AM",
+  cronExpression: "0 9 * * *",
+  timezone: "America/New_York",
+  endpoint: "https://api.example.com/health",
+  httpMethod: "GET",
+  body: JSON.stringify({ key: "value" }), // Optional for POST/PUT/PATCH
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer token",
+  },
+  maxRetries: 3,
+  timeoutSeconds: 30,
+});
+```
+
+**Parameters:**
+
+- `name` (string, required): A descriptive name for the schedule
+- `description` (string, optional): Additional description of what the schedule does
+- `cronExpression` (string, required): Valid cron expression defining when to run
+- `timezone` (string, required): IANA timezone identifier (e.g., 'America/New_York')
+- `endpoint` (string, required): The HTTP endpoint to call
+- `httpMethod` ("GET" | "POST" | "PUT" | "DELETE" | "PATCH", required): HTTP method to use
+- `body` (string, optional): Request body for POST/PUT/PATCH requests
+- `headers` (`Record<string, string>`, optional): HTTP headers to include in the request
+- `maxRetries` (number, optional): Maximum number of retry attempts (default: 3)
+- `timeoutSeconds` (number, optional): Request timeout in seconds (default: 30)
+
+**Returns:** `Promise<Schedule>`
+
+## Update Schedule
+
+Update an existing schedule.
+
+```typescript
+const updatedSchedule = await cronhost.updateSchedule("schedule-id", {
+  name: "Updated Schedule Name",
+  cronExpression: "0 10 * * *", // Changed to 10 AM
+  maxRetries: 5,
+});
+```
+
+**Parameters:**
+
+- `id` (string, required): The unique identifier of the schedule to update
+- `data` (UpdateScheduleData, required): Object containing fields to update
+
+**UpdateScheduleData fields** (all optional):
+
+- `name` (string): Update the schedule name
+- `description` (string): Update the description
+- `cronExpression` (string): Update the cron expression
+- `timezone` (string): Update the timezone
+- `endpoint` (string): Update the endpoint URL
+- `httpMethod` ("GET" | "POST" | "PUT" | "DELETE" | "PATCH"): Update HTTP method
+- `body` (string): Update request body
+- `headers` (`Record<string, string>`): Update HTTP headers
+- `maxRetries` (number): Update retry limit
+- `timeoutSeconds` (number): Update timeout
+
+**Returns:** `Promise<Schedule>`
+
+## Delete Schedule
+
+Delete a schedule permanently.
+
+```typescript
+await cronhost.deleteSchedule("schedule-id");
+```
+
+**Parameters:**
+
+- `id` (string, required): The unique identifier of the schedule to delete
+
+**Returns:** `Promise<void>`
+
+## Toggle Schedule
+
+Enable or disable a schedule without deleting it.
+
+```typescript
+// Disable a schedule
+const disabledSchedule = await cronhost.toggleSchedule("schedule-id", false);
+
+// Enable a schedule
+const enabledSchedule = await cronhost.toggleSchedule("schedule-id", true);
+```
+
+**Parameters:**
+
+- `id` (string, required): The unique identifier of the schedule
+- `enabled` (boolean, required): Whether to enable (true) or disable (false) the schedule
+
+**Returns:** `Promise<Schedule>`
+
+## Trigger Schedule
+
+Manually trigger a schedule to run immediately, regardless of its cron schedule.
+
+```typescript
+const job = await cronhost.triggerSchedule("schedule-id");
+```
+
+**Parameters:**
+
+- `id` (string, required): The unique identifier of the schedule to trigger
+
+**Returns:** `Promise<Job>` - Returns the created job that will execute the request
+
+## Example: Complete Schedule Workflow
+
+```typescript
+import { Cronhost } from "cronhost";
+
+const cronhost = new Cronhost({
+  apiKey: "your-api-key",
+});
+
+async function scheduleWorkflow() {
+  try {
+    // Create a new schedule
+    const schedule = await cronhost.createSchedule({
+      name: "API Health Check",
+      description: "Monitor API health every hour",
+      cronExpression: "0 * * * *", // Every hour
+      timezone: "UTC",
+      endpoint: "https://api.example.com/health",
+      httpMethod: "GET",
+      headers: {
+        "User-Agent": "Cronhost-Monitor",
+      },
+      maxRetries: 2,
+      timeoutSeconds: 15,
+    });
+
+    console.log("Created schedule:", schedule.id);
+
+    // Update the schedule
+    const updated = await cronhost.updateSchedule(schedule.id, {
+      maxRetries: 3, // Increase retry count
+    });
+
+    // Trigger it immediately for testing
+    const job = await cronhost.triggerSchedule(schedule.id);
+    console.log("Triggered job:", job.id);
+
+    // Disable the schedule temporarily
+    await cronhost.toggleSchedule(schedule.id, false);
+    console.log("Schedule disabled");
+
+    // Re-enable it
+    await cronhost.toggleSchedule(schedule.id, true);
+    console.log("Schedule re-enabled");
+  } catch (error) {
+    console.error("Workflow error:", error.message);
+  }
+}
+
+scheduleWorkflow();
+```

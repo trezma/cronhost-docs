@@ -1,0 +1,1224 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Cronhost API",
+    "description": "Schedule HTTP requests with cron expressions. Cronhost allows you to automate HTTP requests on a schedule using familiar cron syntax.",
+    "license": {
+      "name": "MIT"
+    },
+    "version": "1.0.0",
+    "contact": {
+      "name": "Cronhost Support",
+      "email": "help@cronho.st",
+      "url": "https://cronho.st"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://cronho.st/api/v1",
+      "description": "Production API"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/schedules": {
+      "get": {
+        "summary": "List Schedules",
+        "description": "Retrieve all schedules for the authenticated user. Returns an array of schedule objects with their current configuration and status.",
+        "operationId": "getSchedules",
+        "tags": ["Schedules"],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved schedules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Schedule"
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": ["data", "success"]
+                },
+                "examples": {
+                  "successResponse": {
+                    "summary": "Successful response with schedules",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "schedule_123",
+                          "name": "Daily Health Check",
+                          "description": "Check API health every day at 9 AM",
+                          "cronExpression": "0 9 * * *",
+                          "timezone": "America/New_York",
+                          "endpoint": "https://api.example.com/health",
+                          "httpMethod": "GET",
+                          "body": null,
+                          "headers": "{\"User-Agent\": \"Cronhost-Monitor\"}",
+                          "isEnabled": true,
+                          "nextRunAtUtc": "2024-01-15T14:00:00.000Z",
+                          "lastRunAtUtc": "2024-01-14T14:00:00.000Z",
+                          "createdAt": "2024-01-01T12:00:00.000Z",
+                          "updatedAt": "2024-01-14T14:00:00.000Z",
+                          "maxRetries": 3,
+                          "timeoutSeconds": 30
+                        }
+                      ],
+                      "success": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Schedule",
+        "description": "Create a new scheduled HTTP request with cron expression timing.",
+        "operationId": "createSchedule",
+        "tags": ["Schedules"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateScheduleRequest"
+              },
+              "examples": {
+                "getRequest": {
+                  "summary": "GET request example",
+                  "value": {
+                    "name": "Daily Health Check",
+                    "description": "Check API health every day at 9 AM",
+                    "cronExpression": "0 9 * * *",
+                    "timezone": "America/New_York",
+                    "endpoint": "https://api.example.com/health",
+                    "httpMethod": "GET",
+                    "headers": "{\"User-Agent\": \"Cronhost-Monitor\"}",
+                    "maxRetries": 3,
+                    "timeoutSeconds": 30
+                  }
+                },
+                "postRequest": {
+                  "summary": "POST request example",
+                  "value": {
+                    "name": "Weekly Report",
+                    "description": "Send weekly report every Monday at 8 AM",
+                    "cronExpression": "0 8 * * 1",
+                    "timezone": "UTC",
+                    "endpoint": "https://api.example.com/reports",
+                    "httpMethod": "POST",
+                    "body": "{\"reportType\": \"weekly\", \"format\": \"json\"}",
+                    "headers": "{\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer token\"}",
+                    "maxRetries": 2,
+                    "timeoutSeconds": 60
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Schedule created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Schedule"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": ["data", "success"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/schedules/{id}": {
+      "get": {
+        "summary": "Get Schedule",
+        "description": "Retrieve a specific schedule by its ID.",
+        "operationId": "getSchedule",
+        "tags": ["Schedules"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Unique schedule identifier",
+            "schema": {
+              "type": "string",
+              "example": "schedule_123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved schedule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Schedule"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": ["data", "success"]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Schedule",
+        "description": "Update an existing schedule. All fields are optional - only include fields you want to update.",
+        "operationId": "updateSchedule",
+        "tags": ["Schedules"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Unique schedule identifier",
+            "schema": {
+              "type": "string",
+              "example": "schedule_123"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateScheduleRequest"
+              },
+              "examples": {
+                "updateName": {
+                  "summary": "Update name only",
+                  "value": {
+                    "name": "Updated Schedule Name"
+                  }
+                },
+                "updateCron": {
+                  "summary": "Update cron expression",
+                  "value": {
+                    "cronExpression": "0 10 * * *",
+                    "maxRetries": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Schedule updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Schedule"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": ["data", "success"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Schedule",
+        "description": "Permanently delete a schedule. This action cannot be undone.",
+        "operationId": "deleteSchedule",
+        "tags": ["Schedules"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Unique schedule identifier",
+            "schema": {
+              "type": "string",
+              "example": "schedule_123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Schedule deleted successfully"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/schedules/{id}/toggle": {
+      "patch": {
+        "summary": "Toggle Schedule",
+        "description": "Enable or disable a schedule without deleting it. Disabled schedules will not execute until re-enabled.",
+        "operationId": "toggleSchedule",
+        "tags": ["Schedules"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Unique schedule identifier",
+            "schema": {
+              "type": "string",
+              "example": "schedule_123"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether to enable (true) or disable (false) the schedule"
+                  }
+                },
+                "required": ["enabled"]
+              },
+              "examples": {
+                "enable": {
+                  "summary": "Enable schedule",
+                  "value": {
+                    "enabled": true
+                  }
+                },
+                "disable": {
+                  "summary": "Disable schedule",
+                  "value": {
+                    "enabled": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Schedule toggled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Schedule"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Schedule enabled successfully"
+                    }
+                  },
+                  "required": ["data", "success", "message"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/schedules/{id}/trigger": {
+      "post": {
+        "summary": "Trigger Schedule",
+        "description": "Manually trigger a schedule to run immediately, regardless of its cron schedule. Creates a new job that will execute the HTTP request.",
+        "operationId": "triggerSchedule",
+        "tags": ["Schedules"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Unique schedule identifier",
+            "schema": {
+              "type": "string",
+              "example": "schedule_123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule triggered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Job"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Schedule triggered successfully"
+                    }
+                  },
+                  "required": ["data", "success", "message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/jobs": {
+      "get": {
+        "summary": "List Jobs",
+        "description": "Retrieve jobs with optional filtering and pagination. Jobs represent individual executions of your scheduled HTTP requests.",
+        "operationId": "getJobs",
+        "tags": ["Jobs"],
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "query",
+            "required": false,
+            "description": "Filter jobs by specific schedule ID",
+            "schema": {
+              "type": "string",
+              "example": "schedule_123"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filter jobs by execution status",
+            "schema": {
+              "type": "string",
+              "enum": ["PENDING", "RUNNING", "SUCCESS", "FAILED"],
+              "example": "SUCCESS"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of jobs per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "example": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved jobs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Job"
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": ["data", "success"]
+                },
+                "examples": {
+                  "successResponse": {
+                    "summary": "Successful response with jobs",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "job_456",
+                          "scheduleId": "schedule_123",
+                          "status": "SUCCESS",
+                          "scheduledRunAtUtc": "2024-01-14T14:00:00.000Z",
+                          "attemptNumber": 1,
+                          "httpMethod": "GET",
+                          "endpoint": "https://api.example.com/health",
+                          "body": null,
+                          "headers": "{\"User-Agent\": \"Cronhost-Monitor\"}",
+                          "statusCode": 200,
+                          "response": "{\"status\": \"ok\", \"uptime\": 99.9}",
+                          "startedAtUtc": "2024-01-14T14:00:01.000Z",
+                          "completedAtUtc": "2024-01-14T14:00:02.500Z",
+                          "errorMessage": null,
+                          "createdAt": "2024-01-14T14:00:00.000Z",
+                          "updatedAt": "2024-01-14T14:00:02.500Z"
+                        }
+                      ],
+                      "success": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/jobs/{id}": {
+      "get": {
+        "summary": "Get Job",
+        "description": "Retrieve detailed information about a specific job execution.",
+        "operationId": "getJob",
+        "tags": ["Jobs"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Unique job identifier",
+            "schema": {
+              "type": "string",
+              "example": "job_456"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Job"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": ["data", "success"]
+                },
+                "examples": {
+                  "successfulJob": {
+                    "summary": "Successful job execution",
+                    "value": {
+                      "data": {
+                        "id": "job_456",
+                        "scheduleId": "schedule_123",
+                        "status": "SUCCESS",
+                        "scheduledRunAtUtc": "2024-01-14T14:00:00.000Z",
+                        "attemptNumber": 1,
+                        "httpMethod": "GET",
+                        "endpoint": "https://api.example.com/health",
+                        "body": null,
+                        "headers": "{\"User-Agent\": \"Cronhost-Monitor\"}",
+                        "statusCode": 200,
+                        "response": "{\"status\": \"ok\", \"uptime\": 99.9}",
+                        "startedAtUtc": "2024-01-14T14:00:01.000Z",
+                        "completedAtUtc": "2024-01-14T14:00:02.500Z",
+                        "errorMessage": null,
+                        "createdAt": "2024-01-14T14:00:00.000Z",
+                        "updatedAt": "2024-01-14T14:00:02.500Z"
+                      },
+                      "success": true
+                    }
+                  },
+                  "failedJob": {
+                    "summary": "Failed job execution",
+                    "value": {
+                      "data": {
+                        "id": "job_457",
+                        "scheduleId": "schedule_123",
+                        "status": "FAILED",
+                        "scheduledRunAtUtc": "2024-01-13T14:00:00.000Z",
+                        "attemptNumber": 3,
+                        "httpMethod": "GET",
+                        "endpoint": "https://api.example.com/health",
+                        "body": null,
+                        "headers": "{\"User-Agent\": \"Cronhost-Monitor\"}",
+                        "statusCode": null,
+                        "response": null,
+                        "startedAtUtc": "2024-01-13T14:00:01.000Z",
+                        "completedAtUtc": "2024-01-13T14:00:31.000Z",
+                        "errorMessage": "Request timeout after 30 seconds",
+                        "createdAt": "2024-01-13T14:00:00.000Z",
+                        "updatedAt": "2024-01-13T14:00:31.000Z"
+                      },
+                      "success": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Schedule": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "cronExpression",
+          "timezone",
+          "endpoint",
+          "httpMethod",
+          "isEnabled",
+          "nextRunAtUtc",
+          "createdAt",
+          "updatedAt",
+          "maxRetries",
+          "timeoutSeconds"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique schedule identifier",
+            "example": "schedule_123"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable schedule name",
+            "example": "Daily Health Check"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional description of what the schedule does",
+            "example": "Check API health every day at 9 AM"
+          },
+          "cronExpression": {
+            "type": "string",
+            "description": "Valid cron expression defining when to run",
+            "example": "0 9 * * *",
+            "pattern": "^\\s*($|#|\\w+\\s*=|(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[01]?\\d|2[0-3])(?:(?:-|\\/|\\,)(?:[01]?\\d|2[0-3]))?(?:,(?:[01]?\\d|2[0-3])(?:(?:-|\\/|\\,)(?:[01]?\\d|2[0-3]))?)*)\\s+(\\?|\\*|(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?(?:,(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?)*)\\s+(\\?|\\*|(?:[1-9]|1[012])(?:(?:-|\\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?(?:,(?:[1-9]|1[012])(?:(?:-|\\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?)*|\\?|\\*|(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?(?:,(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?)*)\\s+(\\?|\\*|(?:[0-6])(?:(?:-|\\/|\\,|#)(?:[0-6]))?(?:L)?(?:,(?:[0-6])(?:(?:-|\\/|\\,|#)(?:[0-6]))?(?:L)?)*|\\?|\\*|(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?(?:,(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?)*)(|\\s)+(\\?|\\*|(?:|\\d{4})(?:(?:-|\\/|\\,)(?:|\\d{4}))?(?:,(?:|\\d{4})(?:(?:-|\\/|\\,)(?:|\\d{4}))?)*))$"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "IANA timezone identifier",
+            "example": "America/New_York"
+          },
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "Target HTTP endpoint URL",
+            "example": "https://api.example.com/health"
+          },
+          "httpMethod": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+            "description": "HTTP method to use for the request",
+            "example": "GET"
+          },
+          "body": {
+            "type": "string",
+            "nullable": true,
+            "description": "Request body for POST/PUT/PATCH requests",
+            "example": "{\"key\": \"value\"}"
+          },
+          "headers": {
+            "type": "string",
+            "nullable": true,
+            "description": "HTTP headers as JSON string",
+            "example": "{\"User-Agent\": \"Cronhost-Monitor\", \"Content-Type\": \"application/json\"}"
+          },
+          "isEnabled": {
+            "type": "boolean",
+            "description": "Whether the schedule is currently active",
+            "example": true
+          },
+          "nextRunAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Next scheduled execution time in UTC",
+            "example": "2024-01-15T14:00:00.000Z"
+          },
+          "lastRunAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last execution time in UTC",
+            "example": "2024-01-14T14:00:00.000Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Schedule creation timestamp",
+            "example": "2024-01-01T12:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last modification timestamp",
+            "example": "2024-01-14T14:00:00.000Z"
+          },
+          "maxRetries": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10,
+            "description": "Maximum number of retry attempts",
+            "example": 3
+          },
+          "timeoutSeconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 300,
+            "description": "Request timeout in seconds",
+            "example": 30
+          }
+        }
+      },
+      "Job": {
+        "type": "object",
+        "required": [
+          "id",
+          "scheduleId",
+          "status",
+          "scheduledRunAtUtc",
+          "attemptNumber",
+          "httpMethod",
+          "endpoint",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique job identifier",
+            "example": "job_456"
+          },
+          "scheduleId": {
+            "type": "string",
+            "description": "ID of the associated schedule",
+            "example": "schedule_123"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "RUNNING", "SUCCESS", "FAILED"],
+            "description": "Current job execution status",
+            "example": "SUCCESS"
+          },
+          "scheduledRunAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the job was scheduled to run",
+            "example": "2024-01-14T14:00:00.000Z"
+          },
+          "attemptNumber": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Current retry attempt (1-based)",
+            "example": 1
+          },
+          "httpMethod": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+            "description": "HTTP method used for the request",
+            "example": "GET"
+          },
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "Target endpoint URL",
+            "example": "https://api.example.com/health"
+          },
+          "body": {
+            "type": "string",
+            "nullable": true,
+            "description": "Request body (null for GET requests)",
+            "example": "{\"key\": \"value\"}"
+          },
+          "headers": {
+            "type": "string",
+            "nullable": true,
+            "description": "HTTP headers as JSON string",
+            "example": "{\"User-Agent\": \"Cronhost-Monitor\"}"
+          },
+          "statusCode": {
+            "type": "integer",
+            "nullable": true,
+            "description": "HTTP response status code (null if request failed)",
+            "example": 200
+          },
+          "response": {
+            "type": "string",
+            "nullable": true,
+            "description": "HTTP response body (null if request failed)",
+            "example": "{\"status\": \"ok\"}"
+          },
+          "startedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When execution started",
+            "example": "2024-01-14T14:00:01.000Z"
+          },
+          "completedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When execution completed",
+            "example": "2024-01-14T14:00:02.500Z"
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error details (null for successful jobs)",
+            "example": "Request timeout after 30 seconds"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Job creation timestamp",
+            "example": "2024-01-14T14:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-14T14:00:02.500Z"
+          }
+        }
+      },
+      "CreateScheduleRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "cronExpression",
+          "timezone",
+          "endpoint",
+          "httpMethod"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable schedule name",
+            "example": "Daily Health Check",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of what the schedule does",
+            "example": "Check API health every day at 9 AM",
+            "maxLength": 1000
+          },
+          "cronExpression": {
+            "type": "string",
+            "description": "Valid cron expression defining when to run",
+            "example": "0 9 * * *"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "IANA timezone identifier",
+            "example": "America/New_York"
+          },
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "Target HTTP endpoint URL",
+            "example": "https://api.example.com/health"
+          },
+          "httpMethod": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+            "description": "HTTP method to use for the request",
+            "example": "GET"
+          },
+          "body": {
+            "type": "string",
+            "description": "Request body for POST/PUT/PATCH requests",
+            "example": "{\"key\": \"value\"}"
+          },
+          "headers": {
+            "type": "string",
+            "description": "HTTP headers as JSON string",
+            "example": "{\"User-Agent\": \"Cronhost-Monitor\", \"Content-Type\": \"application/json\"}"
+          },
+          "maxRetries": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10,
+            "description": "Maximum number of retry attempts",
+            "example": 3,
+            "default": 3
+          },
+          "timeoutSeconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 300,
+            "description": "Request timeout in seconds",
+            "example": 30,
+            "default": 30
+          }
+        }
+      },
+      "UpdateScheduleRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable schedule name",
+            "example": "Updated Schedule Name",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of what the schedule does",
+            "example": "Updated description",
+            "maxLength": 1000
+          },
+          "cronExpression": {
+            "type": "string",
+            "description": "Valid cron expression defining when to run",
+            "example": "0 10 * * *"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "IANA timezone identifier",
+            "example": "UTC"
+          },
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "Target HTTP endpoint URL",
+            "example": "https://api.example.com/health"
+          },
+          "httpMethod": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+            "description": "HTTP method to use for the request",
+            "example": "POST"
+          },
+          "body": {
+            "type": "string",
+            "description": "Request body for POST/PUT/PATCH requests",
+            "example": "{\"updated\": true}"
+          },
+          "headers": {
+            "type": "string",
+            "description": "HTTP headers as JSON string",
+            "example": "{\"User-Agent\": \"Cronhost-Monitor\", \"Content-Type\": \"application/json\"}"
+          },
+          "maxRetries": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10,
+            "description": "Maximum number of retry attempts",
+            "example": 5
+          },
+          "timeoutSeconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 300,
+            "description": "Request timeout in seconds",
+            "example": 60
+          }
+        }
+      },
+      "ApiError": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["message", "code"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Human-readable error message"
+              },
+              "code": {
+                "type": "string",
+                "description": "Error code for programmatic handling"
+              },
+              "details": {
+                "description": "Additional error details"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "examples": {
+              "missingApiKey": {
+                "summary": "Missing API key",
+                "value": {
+                  "error": {
+                    "message": "API key is required",
+                    "code": "MISSING_API_KEY"
+                  }
+                }
+              },
+              "invalidApiKey": {
+                "summary": "Invalid API key",
+                "value": {
+                  "error": {
+                    "message": "Invalid API key",
+                    "code": "INVALID_API_KEY"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Validation error occurred",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "error": {
+                "message": "Validation error",
+                "code": "VALIDATION_ERROR",
+                "details": {
+                  "fieldErrors": {
+                    "cronExpression": ["Invalid cron expression"],
+                    "endpoint": ["Must be a valid URL"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "examples": {
+              "scheduleNotFound": {
+                "summary": "Schedule not found",
+                "value": {
+                  "error": {
+                    "message": "Schedule not found",
+                    "code": "NOT_FOUND"
+                  }
+                }
+              },
+              "jobNotFound": {
+                "summary": "Job not found",
+                "value": {
+                  "error": {
+                    "message": "Job not found",
+                    "code": "NOT_FOUND"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "error": {
+                "message": "Internal server error",
+                "code": "INTERNAL_ERROR"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API key for authentication. Get your API key from the [Cronhost dashboard](https://cronho.st/settings)."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Schedules",
+      "description": "Create, manage, and control scheduled HTTP requests"
+    },
+    {
+      "name": "Jobs",
+      "description": "Monitor and retrieve job execution details"
+    }
+  ]
+}

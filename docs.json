@@ -1,0 +1,102 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "cronhost docs",
+  "colors": {
+    "primary": "#26a69a",
+    "dark": "#8e44ad"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["index", "quickstart"]
+          }
+        ]
+      },
+      {
+        "tab": "SDK Reference",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["sdk-reference/introduction"]
+          },
+          {
+            "group": "Core Features",
+            "pages": ["sdk-reference/schedules", "sdk-reference/jobs"]
+          },
+          {
+            "group": "Reference",
+            "pages": ["sdk-reference/types"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication"
+            ]
+          },
+          {
+            "group": "Schedule Endpoints",
+            "pages": [
+              "api-reference/schedule/list-schedules",
+              "api-reference/schedule/create-schedule",
+              "api-reference/schedule/get-schedule",
+              "api-reference/schedule/update-schedule",
+              "api-reference/schedule/delete-schedule",
+              "api-reference/schedule/toggle-schedule",
+              "api-reference/schedule/trigger-schedule"
+            ]
+          },
+          {
+            "group": "Job Endpoints",
+            "pages": [
+              "api-reference/job/list-jobs",
+              "api-reference/job/get-job"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Website",
+          "href": "https://cronho.st",
+          "icon": "globe"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo.svg",
+    "dark": "/logo.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:help@cronho.st"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://cronho.st/dashboard"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/trezma"
+    }
+  }
+}

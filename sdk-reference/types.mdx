@@ -1,0 +1,243 @@
+---
+title: "Types Reference"
+description: "Complete TypeScript type definitions for the Cronhost SDK"
+---
+
+# Types Reference
+
+This page provides complete TypeScript type definitions for all interfaces and types used in the Cronhost SDK.
+
+## Configuration Types
+
+### CronhostConfig
+
+Configuration object for initializing the Cronhost client.
+
+```typescript
+interface CronhostConfig {
+  apiKey: string; // Your Cronhost API key (required)
+  baseUrl?: string; // Custom base URL (optional, defaults to https://cronho.st)
+}
+```
+
+## Core Entity Types
+
+### Schedule
+
+Represents a scheduled HTTP request configuration.
+
+```typescript
+interface Schedule {
+  id: string; // Unique schedule identifier
+  name: string; // Human-readable schedule name
+  description?: string; // Optional description
+  cronExpression: string; // Cron expression for scheduling
+  timezone: string; // IANA timezone identifier
+  endpoint: string; // Target HTTP endpoint
+  httpMethod: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  body?: string; // Request body (for POST/PUT/PATCH)
+  headers?: string; // HTTP headers as JSON string
+  isEnabled: boolean; // Whether schedule is active
+  nextRunAtUtc: Date; // Next scheduled execution time
+  lastRunAtUtc?: Date; // Last execution time (if any)
+  createdAt: Date; // Schedule creation timestamp
+  updatedAt: Date; // Last modification timestamp
+  maxRetries: number; // Maximum retry attempts
+  timeoutSeconds: number; // Request timeout in seconds
+}
+```
+
+### Job
+
+Represents an individual execution of a scheduled HTTP request.
+
+```typescript
+interface Job {
+  id: string; // Unique job identifier
+  scheduleId: string; // Associated schedule ID
+  status: "PENDING" | "RUNNING" | "SUCCESS" | "FAILED";
+  scheduledRunAtUtc: Date; // Original scheduled run time
+  attemptNumber: number; // Current retry attempt (1-based)
+  httpMethod: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  endpoint: string; // Target endpoint URL
+  body?: string; // Request body (if applicable)
+  headers?: string; // Request headers as JSON string
+  statusCode?: number; // HTTP response status code
+  response?: string; // HTTP response body
+  startedAtUtc?: Date; // Execution start time
+  completedAtUtc?: Date; // Execution completion time
+  errorMessage?: string; // Error details (if failed)
+  createdAt: Date; // Job creation timestamp
+  updatedAt: Date; // Last update timestamp
+}
+```
+
+## Input Types
+
+### CreateScheduleData
+
+Data required to create a new schedule.
+
+```typescript
+interface CreateScheduleData {
+  name: string; // Schedule name (required)
+  description?: string; // Optional description
+  cronExpression: string; // Cron expression (required)
+  timezone: string; // IANA timezone (required)
+  endpoint: string; // Target URL (required)
+  httpMethod: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"; // HTTP method (required)
+  body?: string; // Request body
+  headers?: Record<string, string>; // HTTP headers as key-value pairs
+  maxRetries?: number; // Retry limit (optional, default varies)
+  timeoutSeconds?: number; // Timeout in seconds (optional, default varies)
+}
+```
+
+### UpdateScheduleData
+
+Data for updating an existing schedule. All fields are optional.
+
+```typescript
+interface UpdateScheduleData {
+  name?: string; // Update schedule name
+  description?: string; // Update description
+  cronExpression?: string; // Update cron expression
+  timezone?: string; // Update timezone
+  endpoint?: string; // Update endpoint URL
+  httpMethod?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"; // Update HTTP method
+  body?: string; // Update request body
+  headers?: Record<string, string>; // Update HTTP headers
+  maxRetries?: number; // Update retry limit
+  timeoutSeconds?: number; // Update timeout
+}
+```
+
+### GetJobsParams
+
+Parameters for filtering and paginating job queries.
+
+```typescript
+interface GetJobsParams {
+  scheduleId?: string; // Filter by schedule ID
+  status?: "PENDING" | "RUNNING" | "SUCCESS" | "FAILED"; // Filter by status
+  page?: number; // Page number (default: 1)
+  limit?: number; // Items per page (default: 10, max: 100)
+}
+```
+
+## Response Types
+
+### `ApiResponse<T>`
+
+Generic wrapper for successful API responses.
+
+```typescript
+interface ApiResponse<T> {
+  data: T; // Response payload
+  success: boolean; // Always true for successful responses
+  message?: string; // Optional success message
+}
+```
+
+### ApiError
+
+Structure for API error responses.
+
+```typescript
+interface ApiError {
+  error: {
+    message: string; // Human-readable error message
+    code: string; // Error code for programmatic handling
+    details?: any; // Additional error details (e.g., validation errors)
+  };
+}
+```
+
+## Enum Types
+
+### Job Status
+
+```typescript
+type JobStatus = "PENDING" | "RUNNING" | "SUCCESS" | "FAILED";
+```
+
+### HTTP Methods
+
+```typescript
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+```
+
+## Usage Examples
+
+### Type-safe Schedule Creation
+
+```typescript
+import { Cronhost, CreateScheduleData, Schedule } from "cronhost";
+
+const cronhost = new Cronhost({
+  apiKey: "your-api-key",
+});
+
+const scheduleData: CreateScheduleData = {
+  name: "API Health Check",
+  description: "Check API status every hour",
+  cronExpression: "0 * * * *",
+  timezone: "UTC",
+  endpoint: "https://api.example.com/health",
+  httpMethod: "GET",
+  headers: {
+    "User-Agent": "Cronhost-Monitor",
+    Accept: "application/json",
+  },
+  maxRetries: 3,
+  timeoutSeconds: 30,
+};
+
+const schedule: Schedule = await cronhost.createSchedule(scheduleData);
+```
+
+### Type-safe Job Monitoring
+
+```typescript
+import { Job, GetJobsParams } from "cronhost";
+
+const jobParams: GetJobsParams = {
+  scheduleId: "schedule-123",
+  status: "FAILED",
+  page: 1,
+  limit: 20,
+};
+
+const failedJobs: Job[] = await cronhost.getJobs(jobParams);
+
+failedJobs.forEach((job: Job) => {
+  console.log(`Job ${job.id} failed: ${job.errorMessage}`);
+});
+```
+
+### Custom Type Guards
+
+```typescript
+function isSuccessfulJob(
+  job: Job
+): job is Job & { statusCode: number; response: string } {
+  return (
+    job.status === "SUCCESS" &&
+    job.statusCode !== undefined &&
+    job.response !== undefined
+  );
+}
+
+function isFailedJob(job: Job): job is Job & { errorMessage: string } {
+  return job.status === "FAILED" && job.errorMessage !== undefined;
+}
+
+// Usage
+const job = await cronhost.getJob("job-id");
+
+if (isSuccessfulJob(job)) {
+  console.log(`Success! Status: ${job.statusCode}, Response: ${job.response}`);
+} else if (isFailedJob(job)) {
+  console.log(`Failed: ${job.errorMessage}`);
+}
+```
