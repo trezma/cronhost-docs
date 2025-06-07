@@ -16,6 +16,10 @@
           {
             "group": "Get Started",
             "pages": ["index", "quickstart"]
+          },
+          {
+            "group": "Reference",
+            "pages": ["timezones"]
           }
         ]
       },
@@ -32,7 +36,7 @@
           },
           {
             "group": "Reference",
-            "pages": ["sdk-reference/types"]
+            "pages": ["sdk-reference/types", "timezones"]
           }
         ]
       },
@@ -43,7 +47,8 @@
             "group": "Getting Started",
             "pages": [
               "api-reference/introduction",
-              "api-reference/authentication"
+              "api-reference/authentication",
+              "timezones"
             ]
           },
           {

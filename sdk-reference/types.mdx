@@ -32,7 +32,7 @@ interface Schedule {
   name: string; // Human-readable schedule name
   description?: string; // Optional description
   cronExpression: string; // Cron expression for scheduling
-  timezone: string; // IANA timezone identifier
+  timezone: string; // IANA timezone identifier - see /timezones
   endpoint: string; // Target HTTP endpoint
   httpMethod: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   body?: string; // Request body (for POST/PUT/PATCH)
@@ -83,7 +83,7 @@ interface CreateScheduleData {
   name: string; // Schedule name (required)
   description?: string; // Optional description
   cronExpression: string; // Cron expression (required)
-  timezone: string; // IANA timezone (required)
+  timezone: string; // IANA timezone (required) - see /timezones
   endpoint: string; // Target URL (required)
   httpMethod: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"; // HTTP method (required)
   body?: string; // Request body
@@ -102,7 +102,7 @@ interface UpdateScheduleData {
   name?: string; // Update schedule name
   description?: string; // Update description
   cronExpression?: string; // Update cron expression
-  timezone?: string; // Update timezone
+  timezone?: string; // Update timezone - see /timezones
   endpoint?: string; // Update endpoint URL
   httpMethod?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"; // Update HTTP method
   body?: string; // Update request body

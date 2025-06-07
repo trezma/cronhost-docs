@@ -1,0 +1,607 @@
+---
+title: "Timezone Reference"
+description: "Complete guide to IANA timezone identifiers for Cronhost schedules"
+---
+
+# Timezone Reference
+
+When creating schedules with Cronhost, you need to specify a timezone using IANA timezone identifiers. This ensures your scheduled HTTP requests run at the correct local time, regardless of where our servers are located.
+
+## Overview
+
+IANA (Internet Assigned Numbers Authority) timezone identifiers are standardized timezone names that handle daylight saving time transitions automatically. When you specify `"0 9 * * *"` (9 AM daily) with timezone `"America/New_York"`, Cronhost will:
+
+- Run at 9 AM EST during winter months
+- Run at 9 AM EDT during summer months
+- Handle the DST transitions automatically
+
+<Warning>
+  Always use IANA identifiers like `"America/New_York"` instead of abbreviations
+  like `"EST"` or `"PST"`. Abbreviations don't handle daylight saving time
+  correctly.
+</Warning>
+
+## Quick Examples
+
+Here are some common timezone examples for creating Cronhost schedules:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://cronho.st/api/v1/schedules" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Daily Report",
+    "cronExpression": "0 9 * * *",
+    "timezone": "America/New_York",
+    "endpoint": "https://api.example.com/report"
+  }'
+```
+
+```typescript SDK
+const schedule = await cronhost.createSchedule({
+  name: "Daily Report",
+  cronExpression: "0 9 * * *",
+  timezone: "America/New_York", // Eastern Time
+  endpoint: "https://api.example.com/report",
+  httpMethod: "GET",
+});
+```
+
+</CodeGroup>
+
+## Popular Timezones
+
+Most commonly used timezone identifiers:
+
+| Timezone          | Identifier            | Description                |
+| ----------------- | --------------------- | -------------------------- |
+| 🇺🇸 Eastern Time   | `America/New_York`    | US East Coast (EST/EDT)    |
+| 🇺🇸 Central Time   | `America/Chicago`     | US Central (CST/CDT)       |
+| 🇺🇸 Mountain Time  | `America/Denver`      | US Mountain (MST/MDT)      |
+| 🇺🇸 Pacific Time   | `America/Los_Angeles` | US West Coast (PST/PDT)    |
+| 🇬🇧 London         | `Europe/London`       | UK (GMT/BST)               |
+| 🇪🇺 Central Europe | `Europe/Berlin`       | CET/CEST                   |
+| 🇯🇵 Tokyo          | `Asia/Tokyo`          | Japan Standard Time        |
+| 🇦🇺 Sydney         | `Australia/Sydney`    | Australian Eastern Time    |
+| 🌍 UTC            | `UTC`                 | Coordinated Universal Time |
+
+## Complete IANA Timezone List
+
+### Africa
+
+- `Africa/Abidjan` - Côte d'Ivoire
+- `Africa/Accra` - Ghana
+- `Africa/Addis_Ababa` - Ethiopia
+- `Africa/Algiers` - Algeria
+- `Africa/Asmara` - Eritrea
+- `Africa/Bamako` - Mali
+- `Africa/Bangui` - Central African Republic
+- `Africa/Banjul` - Gambia
+- `Africa/Bissau` - Guinea-Bissau
+- `Africa/Blantyre` - Malawi
+- `Africa/Brazzaville` - Republic of the Congo
+- `Africa/Bujumbura` - Burundi
+- `Africa/Cairo` - Egypt
+- `Africa/Casablanca` - Morocco
+- `Africa/Ceuta` - Spain (Ceuta)
+- `Africa/Conakry` - Guinea
+- `Africa/Dakar` - Senegal
+- `Africa/Dar_es_Salaam` - Tanzania
+- `Africa/Djibouti` - Djibouti
+- `Africa/Douala` - Cameroon
+- `Africa/El_Aaiun` - Western Sahara
+- `Africa/Freetown` - Sierra Leone
+- `Africa/Gaborone` - Botswana
+- `Africa/Harare` - Zimbabwe
+- `Africa/Johannesburg` - South Africa
+- `Africa/Juba` - South Sudan
+- `Africa/Kampala` - Uganda
+- `Africa/Khartoum` - Sudan
+- `Africa/Kigali` - Rwanda
+- `Africa/Kinshasa` - Democratic Republic of the Congo (west)
+- `Africa/Lagos` - Nigeria
+- `Africa/Libreville` - Gabon
+- `Africa/Lome` - Togo
+- `Africa/Luanda` - Angola
+- `Africa/Lubumbashi` - Democratic Republic of the Congo (east)
+- `Africa/Lusaka` - Zambia
+- `Africa/Malabo` - Equatorial Guinea
+- `Africa/Maputo` - Mozambique
+- `Africa/Maseru` - Lesotho
+- `Africa/Mbabane` - Eswatini
+- `Africa/Mogadishu` - Somalia
+- `Africa/Monrovia` - Liberia
+- `Africa/Nairobi` - Kenya
+- `Africa/Ndjamena` - Chad
+- `Africa/Niamey` - Niger
+- `Africa/Nouakchott` - Mauritania
+- `Africa/Ouagadougou` - Burkina Faso
+- `Africa/Porto-Novo` - Benin
+- `Africa/Sao_Tome` - São Tomé and Príncipe
+- `Africa/Tripoli` - Libya
+- `Africa/Tunis` - Tunisia
+- `Africa/Windhoek` - Namibia
+
+### America
+
+#### North America
+
+- `America/Adak` - Alaska (Aleutian Islands)
+- `America/Anchorage` - Alaska
+- `America/Anguilla` - Anguilla
+- `America/Antigua` - Antigua and Barbuda
+- `America/Aruba` - Aruba
+- `America/Atka` - Alaska (deprecated, use America/Adak)
+- `America/Barbados` - Barbados
+- `America/Belize` - Belize
+- `America/Blanc-Sablon` - Quebec, Canada
+- `America/Boise` - Idaho, USA
+- `America/Cambridge_Bay` - Nunavut, Canada
+- `America/Cancun` - Mexico
+- `America/Cayman` - Cayman Islands
+- `America/Chicago` - Central Time (US & Canada)
+- `America/Chihuahua` - Mexico
+- `America/Costa_Rica` - Costa Rica
+- `America/Creston` - British Columbia, Canada
+- `America/Curacao` - Curaçao
+- `America/Danmarkshavn` - Greenland
+- `America/Dawson` - Yukon, Canada
+- `America/Dawson_Creek` - British Columbia, Canada
+- `America/Denver` - Mountain Time (US & Canada)
+- `America/Detroit` - Eastern Time (US & Canada)
+- `America/Dominica` - Dominica
+- `America/Edmonton` - Alberta, Canada
+- `America/Eirunepe` - Brazil
+- `America/El_Salvador` - El Salvador
+- `America/Fort_Nelson` - British Columbia, Canada
+- `America/Glace_Bay` - Nova Scotia, Canada
+- `America/Godthab` - Greenland (deprecated, use America/Nuuk)
+- `America/Goose_Bay` - Newfoundland and Labrador, Canada
+- `America/Grand_Turk` - Turks and Caicos Islands
+- `America/Grenada` - Grenada
+- `America/Guadeloupe` - Guadeloupe
+- `America/Guatemala` - Guatemala
+- `America/Guayaquil` - Ecuador
+- `America/Guyana` - Guyana
+- `America/Halifax` - Atlantic Time (Canada)
+- `America/Havana` - Cuba
+- `America/Hermosillo` - Mexico
+- `America/Indiana/Indianapolis` - Indiana, USA (Eastern Time)
+- `America/Indiana/Knox` - Indiana, USA (Central Time)
+- `America/Indiana/Marengo` - Indiana, USA (Eastern Time)
+- `America/Indiana/Petersburg` - Indiana, USA (Eastern Time)
+- `America/Indiana/Tell_City` - Indiana, USA (Central Time)
+- `America/Indiana/Vevay` - Indiana, USA (Eastern Time)
+- `America/Indiana/Vincennes` - Indiana, USA (Eastern Time)
+- `America/Indiana/Winamac` - Indiana, USA (Eastern Time)
+- `America/Inuvik` - Northwest Territories, Canada
+- `America/Iqaluit` - Nunavut, Canada
+- `America/Jamaica` - Jamaica
+- `America/Juneau` - Alaska, USA
+- `America/Kentucky/Louisville` - Kentucky, USA (Eastern Time)
+- `America/Kentucky/Monticello` - Kentucky, USA (Eastern Time)
+- `America/Kralendijk` - Caribbean Netherlands
+- `America/La_Paz` - Bolivia
+- `America/Lima` - Peru
+- `America/Los_Angeles` - Pacific Time (US & Canada)
+- `America/Lower_Princes` - Caribbean Netherlands
+- `America/Marigot` - Saint Martin
+- `America/Martinique` - Martinique
+- `America/Matamoros` - Mexico
+- `America/Mazatlan` - Mexico
+- `America/Menominee` - Michigan, USA (Central Time)
+- `America/Merida` - Mexico
+- `America/Metlakatla` - Alaska, USA
+- `America/Mexico_City` - Mexico
+- `America/Miquelon` - Saint Pierre and Miquelon
+- `America/Moncton` - New Brunswick, Canada
+- `America/Monterrey` - Mexico
+- `America/Montserrat` - Montserrat
+- `America/Nassau` - Bahamas
+- `America/New_York` - Eastern Time (US & Canada)
+- `America/Nipigon` - Ontario, Canada
+- `America/Nome` - Alaska, USA
+- `America/Noronha` - Brazil
+- `America/North_Dakota/Beulah` - North Dakota, USA (Central Time)
+- `America/North_Dakota/Center` - North Dakota, USA (Central Time)
+- `America/North_Dakota/New_Salem` - North Dakota, USA (Central Time)
+- `America/Nuuk` - Greenland
+- `America/Ojinaga` - Mexico
+- `America/Panama` - Panama
+- `America/Pangnirtung` - Nunavut, Canada
+- `America/Paramaribo` - Suriname
+- `America/Phoenix` - Arizona, USA (Mountain Standard Time)
+- `America/Port-au-Prince` - Haiti
+- `America/Port_of_Spain` - Trinidad and Tobago
+- `America/Porto_Velho` - Brazil
+- `America/Puerto_Rico` - Puerto Rico
+- `America/Punta_Arenas` - Chile
+- `America/Rainy_River` - Ontario, Canada
+- `America/Rankin_Inlet` - Nunavut, Canada
+- `America/Recife` - Brazil
+- `America/Regina` - Saskatchewan, Canada
+- `America/Resolute` - Nunavut, Canada
+- `America/Rio_Branco` - Brazil
+- `America/Santarem` - Brazil
+- `America/Santiago` - Chile
+- `America/Santo_Domingo` - Dominican Republic
+- `America/Sao_Paulo` - Brazil
+- `America/Scoresbysund` - Greenland
+- `America/Sitka` - Alaska, USA
+- `America/St_Barthelemy` - Saint Barthélemy
+- `America/St_Johns` - Newfoundland Time (Canada)
+- `America/St_Kitts` - Saint Kitts and Nevis
+- `America/St_Lucia` - Saint Lucia
+- `America/St_Thomas` - U.S. Virgin Islands
+- `America/St_Vincent` - Saint Vincent and the Grenadines
+- `America/Swift_Current` - Saskatchewan, Canada
+- `America/Tegucigalpa` - Honduras
+- `America/Thule` - Greenland
+- `America/Thunder_Bay` - Ontario, Canada
+- `America/Tijuana` - Mexico
+- `America/Toronto` - Eastern Time (Canada)
+- `America/Tortola` - British Virgin Islands
+- `America/Vancouver` - Pacific Time (Canada)
+- `America/Whitehorse` - Yukon, Canada
+- `America/Winnipeg` - Central Time (Canada)
+- `America/Yakutat` - Alaska, USA
+- `America/Yellowknife` - Northwest Territories, Canada
+
+#### South America
+
+- `America/Argentina/Buenos_Aires` - Argentina
+- `America/Argentina/Catamarca` - Argentina
+- `America/Argentina/Cordoba` - Argentina
+- `America/Argentina/Jujuy` - Argentina
+- `America/Argentina/La_Rioja` - Argentina
+- `America/Argentina/Mendoza` - Argentina
+- `America/Argentina/Rio_Gallegos` - Argentina
+- `America/Argentina/Salta` - Argentina
+- `America/Argentina/San_Juan` - Argentina
+- `America/Argentina/San_Luis` - Argentina
+- `America/Argentina/Tucuman` - Argentina
+- `America/Argentina/Ushuaia` - Argentina
+- `America/Asuncion` - Paraguay
+- `America/Bahia` - Brazil
+- `America/Bahia_Banderas` - Mexico
+- `America/Belem` - Brazil
+- `America/Boa_Vista` - Brazil
+- `America/Bogota` - Colombia
+- `America/Brasilia` - Brazil
+- `America/Campo_Grande` - Brazil
+- `America/Caracas` - Venezuela
+- `America/Cayenne` - French Guiana
+- `America/Cuiaba` - Brazil
+- `America/Fortaleza` - Brazil
+- `America/Maceio` - Brazil
+- `America/Manaus` - Brazil
+- `America/Montevideo` - Uruguay
+
+### Antarctica
+
+- `Antarctica/Casey` - Casey Station
+- `Antarctica/Davis` - Davis Station
+- `Antarctica/DumontDUrville` - Dumont d'Urville Station
+- `Antarctica/Macquarie` - Macquarie Island
+- `Antarctica/Mawson` - Mawson Station
+- `Antarctica/McMurdo` - McMurdo Station
+- `Antarctica/Palmer` - Palmer Station
+- `Antarctica/Rothera` - Rothera Station
+- `Antarctica/Syowa` - Syowa Station
+- `Antarctica/Troll` - Troll Station
+- `Antarctica/Vostok` - Vostok Station
+
+### Arctic
+
+- `Arctic/Longyearbyen` - Svalbard and Jan Mayen
+
+### Asia
+
+- `Asia/Aden` - Yemen
+- `Asia/Almaty` - Kazakhstan
+- `Asia/Amman` - Jordan
+- `Asia/Anadyr` - Russia
+- `Asia/Aqtau` - Kazakhstan
+- `Asia/Aqtobe` - Kazakhstan
+- `Asia/Ashgabat` - Turkmenistan
+- `Asia/Atyrau` - Kazakhstan
+- `Asia/Baghdad` - Iraq
+- `Asia/Bahrain` - Bahrain
+- `Asia/Baku` - Azerbaijan
+- `Asia/Bangkok` - Thailand
+- `Asia/Barnaul` - Russia
+- `Asia/Beirut` - Lebanon
+- `Asia/Bishkek` - Kyrgyzstan
+- `Asia/Brunei` - Brunei
+- `Asia/Chita` - Russia
+- `Asia/Choibalsan` - Mongolia
+- `Asia/Colombo` - Sri Lanka
+- `Asia/Damascus` - Syria
+- `Asia/Dhaka` - Bangladesh
+- `Asia/Dili` - East Timor
+- `Asia/Dubai` - United Arab Emirates
+- `Asia/Dushanbe` - Tajikistan
+- `Asia/Famagusta` - Cyprus
+- `Asia/Gaza` - Palestine
+- `Asia/Hebron` - Palestine
+- `Asia/Ho_Chi_Minh` - Vietnam
+- `Asia/Hong_Kong` - Hong Kong
+- `Asia/Hovd` - Mongolia
+- `Asia/Irkutsk` - Russia
+- `Asia/Jakarta` - Indonesia (western)
+- `Asia/Jayapura` - Indonesia (eastern)
+- `Asia/Jerusalem` - Israel
+- `Asia/Kabul` - Afghanistan
+- `Asia/Kamchatka` - Russia
+- `Asia/Karachi` - Pakistan
+- `Asia/Kathmandu` - Nepal
+- `Asia/Khandyga` - Russia
+- `Asia/Kolkata` - India
+- `Asia/Krasnoyarsk` - Russia
+- `Asia/Kuala_Lumpur` - Malaysia
+- `Asia/Kuching` - Malaysia (Borneo)
+- `Asia/Kuwait` - Kuwait
+- `Asia/Macau` - Macao
+- `Asia/Magadan` - Russia
+- `Asia/Makassar` - Indonesia (central)
+- `Asia/Manila` - Philippines
+- `Asia/Muscat` - Oman
+- `Asia/Nicosia` - Cyprus
+- `Asia/Novokuznetsk` - Russia
+- `Asia/Novosibirsk` - Russia
+- `Asia/Omsk` - Russia
+- `Asia/Oral` - Kazakhstan
+- `Asia/Phnom_Penh` - Cambodia
+- `Asia/Pontianak` - Indonesia (western)
+- `Asia/Pyongyang` - North Korea
+- `Asia/Qatar` - Qatar
+- `Asia/Qostanay` - Kazakhstan
+- `Asia/Qyzylorda` - Kazakhstan
+- `Asia/Riyadh` - Saudi Arabia
+- `Asia/Sakhalin` - Russia
+- `Asia/Samarkand` - Uzbekistan
+- `Asia/Seoul` - South Korea
+- `Asia/Shanghai` - China
+- `Asia/Singapore` - Singapore
+- `Asia/Srednekolymsk` - Russia
+- `Asia/Taipei` - Taiwan
+- `Asia/Tashkent` - Uzbekistan
+- `Asia/Tbilisi` - Georgia
+- `Asia/Tehran` - Iran
+- `Asia/Thimphu` - Bhutan
+- `Asia/Tokyo` - Japan
+- `Asia/Tomsk` - Russia
+- `Asia/Ulaanbaatar` - Mongolia
+- `Asia/Urumqi` - China (western)
+- `Asia/Ust-Nera` - Russia
+- `Asia/Vientiane` - Laos
+- `Asia/Vladivostok` - Russia
+- `Asia/Yakutsk` - Russia
+- `Asia/Yangon` - Myanmar
+- `Asia/Yekaterinburg` - Russia
+- `Asia/Yerevan` - Armenia
+
+### Atlantic
+
+- `Atlantic/Azores` - Portugal (Azores)
+- `Atlantic/Bermuda` - Bermuda
+- `Atlantic/Canary` - Spain (Canary Islands)
+- `Atlantic/Cape_Verde` - Cape Verde
+- `Atlantic/Faroe` - Faroe Islands
+- `Atlantic/Madeira` - Portugal (Madeira)
+- `Atlantic/Reykjavik` - Iceland
+- `Atlantic/South_Georgia` - South Georgia and the South Sandwich Islands
+- `Atlantic/St_Helena` - Saint Helena
+- `Atlantic/Stanley` - Falkland Islands
+
+### Australia
+
+- `Australia/Adelaide` - South Australia
+- `Australia/Brisbane` - Queensland
+- `Australia/Broken_Hill` - New South Wales (far west)
+- `Australia/Currie` - Tasmania (King Island)
+- `Australia/Darwin` - Northern Territory
+- `Australia/Eucla` - Western Australia (border area)
+- `Australia/Hobart` - Tasmania
+- `Australia/Lindeman` - Queensland (Whitsunday Islands)
+- `Australia/Lord_Howe` - Lord Howe Island
+- `Australia/Melbourne` - Victoria
+- `Australia/Perth` - Western Australia
+- `Australia/Sydney` - New South Wales
+
+### Europe
+
+- `Europe/Amsterdam` - Netherlands
+- `Europe/Andorra` - Andorra
+- `Europe/Astrakhan` - Russia
+- `Europe/Athens` - Greece
+- `Europe/Belgrade` - Serbia
+- `Europe/Berlin` - Germany
+- `Europe/Bratislava` - Slovakia
+- `Europe/Brussels` - Belgium
+- `Europe/Bucharest` - Romania
+- `Europe/Budapest` - Hungary
+- `Europe/Busingen` - Germany
+- `Europe/Chisinau` - Moldova
+- `Europe/Copenhagen` - Denmark
+- `Europe/Dublin` - Ireland
+- `Europe/Gibraltar` - Gibraltar
+- `Europe/Guernsey` - Guernsey
+- `Europe/Helsinki` - Finland
+- `Europe/Isle_of_Man` - Isle of Man
+- `Europe/Istanbul` - Turkey
+- `Europe/Jersey` - Jersey
+- `Europe/Kaliningrad` - Russia
+- `Europe/Kiev` - Ukraine
+- `Europe/Kirov` - Russia
+- `Europe/Lisbon` - Portugal
+- `Europe/Ljubljana` - Slovenia
+- `Europe/London` - United Kingdom
+- `Europe/Luxembourg` - Luxembourg
+- `Europe/Madrid` - Spain
+- `Europe/Malta` - Malta
+- `Europe/Mariehamn` - Finland (Åland Islands)
+- `Europe/Minsk` - Belarus
+- `Europe/Monaco` - Monaco
+- `Europe/Moscow` - Russia
+- `Europe/Oslo` - Norway
+- `Europe/Paris` - France
+- `Europe/Podgorica` - Montenegro
+- `Europe/Prague` - Czech Republic
+- `Europe/Riga` - Latvia
+- `Europe/Rome` - Italy
+- `Europe/Samara` - Russia
+- `Europe/San_Marino` - San Marino
+- `Europe/Sarajevo` - Bosnia and Herzegovina
+- `Europe/Saratov` - Russia
+- `Europe/Simferopol` - Russia (Crimea)
+- `Europe/Skopje` - North Macedonia
+- `Europe/Sofia` - Bulgaria
+- `Europe/Stockholm` - Sweden
+- `Europe/Tallinn` - Estonia
+- `Europe/Tirane` - Albania
+- `Europe/Ulyanovsk` - Russia
+- `Europe/Uzhgorod` - Ukraine
+- `Europe/Vaduz` - Liechtenstein
+- `Europe/Vatican` - Vatican City
+- `Europe/Vienna` - Austria
+- `Europe/Vilnius` - Lithuania
+- `Europe/Volgograd` - Russia
+- `Europe/Warsaw` - Poland
+- `Europe/Zagreb` - Croatia
+- `Europe/Zaporozhye` - Ukraine
+- `Europe/Zurich` - Switzerland
+
+### Indian
+
+- `Indian/Antananarivo` - Madagascar
+- `Indian/Chagos` - British Indian Ocean Territory
+- `Indian/Christmas` - Christmas Island
+- `Indian/Cocos` - Cocos (Keeling) Islands
+- `Indian/Comoro` - Comoros
+- `Indian/Kerguelen` - French Southern Territories
+- `Indian/Mahe` - Seychelles
+- `Indian/Maldives` - Maldives
+- `Indian/Mauritius` - Mauritius
+- `Indian/Mayotte` - Mayotte
+- `Indian/Reunion` - Réunion
+
+### Pacific
+
+- `Pacific/Apia` - Samoa
+- `Pacific/Auckland` - New Zealand
+- `Pacific/Bougainville` - Papua New Guinea
+- `Pacific/Chatham` - New Zealand (Chatham Islands)
+- `Pacific/Chuuk` - Federated States of Micronesia
+- `Pacific/Easter` - Chile (Easter Island)
+- `Pacific/Efate` - Vanuatu
+- `Pacific/Enderbury` - Kiribati
+- `Pacific/Fakaofo` - Tokelau
+- `Pacific/Fiji` - Fiji
+- `Pacific/Funafuti` - Tuvalu
+- `Pacific/Galapagos` - Ecuador (Galápagos Islands)
+- `Pacific/Gambier` - French Polynesia (Gambier Islands)
+- `Pacific/Guadalcanal` - Solomon Islands
+- `Pacific/Guam` - Guam
+- `Pacific/Honolulu` - Hawaii, USA
+- `Pacific/Johnston` - Johnston Atoll
+- `Pacific/Kanton` - Kiribati
+- `Pacific/Kiritimati` - Kiribati
+- `Pacific/Kosrae` - Federated States of Micronesia
+- `Pacific/Kwajalein` - Marshall Islands
+- `Pacific/Majuro` - Marshall Islands
+- `Pacific/Marquesas` - French Polynesia (Marquesas Islands)
+- `Pacific/Midway` - United States Minor Outlying Islands
+- `Pacific/Nauru` - Nauru
+- `Pacific/Niue` - Niue
+- `Pacific/Norfolk` - Norfolk Island
+- `Pacific/Noumea` - New Caledonia
+- `Pacific/Pago_Pago` - American Samoa
+- `Pacific/Palau` - Palau
+- `Pacific/Pitcairn` - Pitcairn Islands
+- `Pacific/Pohnpei` - Federated States of Micronesia
+- `Pacific/Port_Moresby` - Papua New Guinea
+- `Pacific/Rarotonga` - Cook Islands
+- `Pacific/Saipan` - Northern Mariana Islands
+- `Pacific/Tahiti` - French Polynesia (Society Islands)
+- `Pacific/Tarawa` - Kiribati
+- `Pacific/Tongatapu` - Tonga
+- `Pacific/Wake` - Wake Island
+- `Pacific/Wallis` - Wallis and Futuna
+
+### UTC
+
+- `UTC` - Coordinated Universal Time
+
+## Best Practices for Cronhost
+
+1. **Always use IANA identifiers** - Never use abbreviations like "EST" or "PST"
+2. **Test DST transitions** - Verify your schedules work correctly during spring/fall time changes
+3. **Use UTC for global services** - If your API serves global users, consider UTC
+4. **Be specific with locations** - Use `America/New_York` instead of generic `EST`
+5. **Document your choice** - Include timezone reasoning in your schedule descriptions
+
+## Schedule Examples by Region
+
+### US Business Hours
+
+```typescript
+// East Coast business hours (9 AM - 5 PM ET)
+const eastCoastSchedule = await cronhost.createSchedule({
+  name: "East Coast Business Hours Check",
+  cronExpression: "0 9-17 * * 1-5", // Weekdays 9 AM - 5 PM
+  timezone: "America/New_York",
+});
+
+// West Coast business hours (9 AM - 5 PM PT)
+const westCoastSchedule = await cronhost.createSchedule({
+  name: "West Coast Business Hours Check",
+  cronExpression: "0 9-17 * * 1-5", // Weekdays 9 AM - 5 PM
+  timezone: "America/Los_Angeles",
+});
+```
+
+### Global Monitoring
+
+```typescript
+// Global service monitoring every hour
+const globalMonitoring = await cronhost.createSchedule({
+  name: "Global API Health Check",
+  cronExpression: "0 * * * *", // Every hour
+  timezone: "UTC", // Consistent global timing
+});
+```
+
+### European Operations
+
+```typescript
+// European business hours monitoring
+const europeanSchedule = await cronhost.createSchedule({
+  name: "European Business Hours",
+  cronExpression: "0 8-18 * * 1-5", // Weekdays 8 AM - 6 PM
+  timezone: "Europe/London", // Handles GMT/BST automatically
+});
+```
+
+## Common Gotchas
+
+<Warning>
+**Daylight Saving Time**: When DST transitions occur, some times may be skipped (spring forward) or occur twice (fall back). Cronhost handles this automatically, but be aware:
+
+**Spring Forward**: 2:30 AM might be skipped entirely
+
+**Fall Back**: 2:30 AM might run twice
+
+</Warning>
+
+<Note>
+  **Arizona Exception**: Most of Arizona doesn't observe DST. Use
+  `America/Phoenix` for consistent Mountain Standard Time year-round.
+</Note>
+
+## Need Help?
+
+- **Testing schedules?** Use the [Cronhost Dashboard](https://cronho.st/dashboard) to manually trigger and verify timing
+- **Questions?** Contact us at [help@cronho.st](mailto:help@cronho.st)

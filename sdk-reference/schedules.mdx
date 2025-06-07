@@ -58,7 +58,7 @@ const schedule = await cronhost.createSchedule({
 - `name` (string, required): A descriptive name for the schedule
 - `description` (string, optional): Additional description of what the schedule does
 - `cronExpression` (string, required): Valid cron expression defining when to run
-- `timezone` (string, required): IANA timezone identifier (e.g., 'America/New_York')
+- `timezone` (string, required): IANA timezone identifier (e.g., 'America/New_York') - [View all options](/timezones)
 - `endpoint` (string, required): The HTTP endpoint to call
 - `httpMethod` ("GET" | "POST" | "PUT" | "DELETE" | "PATCH", required): HTTP method to use
 - `body` (string, optional): Request body for POST/PUT/PATCH requests

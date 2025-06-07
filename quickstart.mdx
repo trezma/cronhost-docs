@@ -1,23 +1,24 @@
 ---
-title: 'Quickstart Guide'
-description: 'Get up and running with Cronhost in under 5 minutes'
+title: "Quickstart Guide"
+description: "Get up and running with cronhost in under 5 minutes"
 ---
 
 # Quick Start
 
-Get started with Cronhost and create your first scheduled HTTP request in just a few minutes.
+Get started with cronhost and create your first scheduled HTTP request in just a few minutes.
 
 ## 1. Get Your API Key
 
-First, you'll need an API key to authenticate with the Cronhost API.
+First, you'll need an API key to authenticate with the cronhost API.
 
-1. Visit the [Cronhost Dashboard](https://cronho.st/dashboard)
+1. Visit the [cronhost Dashboard](https://cronho.st/dashboard)
 2. Sign up for a free account or log in
 3. Navigate to [Settings](https://cronho.st/settings)
 4. Generate a new API key and copy it
 
 <Warning>
-Keep your API key secure! Don't expose it in client-side code or public repositories.
+  Keep your API key secure! Don't expose it in client-side code or public
+  repositories.
 </Warning>
 
 ## 2. Create Your First Schedule
@@ -63,29 +64,29 @@ pnpm add cronhost
 </CodeGroup>
 
 ```typescript
-import { Cronhost } from 'cronhost';
+import { Cronhost } from "cronhost";
 
 const cronhost = new Cronhost({
-  apiKey: 'YOUR_API_KEY'
+  apiKey: "YOUR_API_KEY",
 });
 
 const schedule = await cronhost.createSchedule({
-  name: 'Hourly Health Check',
-  description: 'Check if our API is healthy every hour',
-  cronExpression: '0 * * * *',
-  timezone: 'UTC',
-  endpoint: 'https://api.example.com/health',
-  httpMethod: 'GET',
+  name: "Hourly Health Check",
+  description: "Check if our API is healthy every hour",
+  cronExpression: "0 * * * *",
+  timezone: "UTC",
+  endpoint: "https://api.example.com/health",
+  httpMethod: "GET",
   maxRetries: 3,
-  timeoutSeconds: 30
+  timeoutSeconds: 30,
 });
 
-console.log('Schedule created:', schedule.id);
+console.log("Schedule created:", schedule.id);
 ```
 
 ## 3. Understanding Cron Expressions
 
-Cronhost uses standard 5-field cron expressions:
+cronhost uses standard 5-field cron expressions:
 
 ```
 ┌───────────── minute (0 - 59)
@@ -99,13 +100,33 @@ Cronhost uses standard 5-field cron expressions:
 
 ### Common Examples
 
-| Expression | Description |
-|------------|-------------|
-| `0 9 * * *` | Every day at 9 AM |
-| `*/15 * * * *` | Every 15 minutes |
-| `0 0 * * 0` | Every Sunday at midnight |
-| `0 12 1 * *` | First day of every month at noon |
-| `30 14 * * 1-5` | Weekdays at 2:30 PM |
+| Expression      | Description                      |
+| --------------- | -------------------------------- |
+| `0 9 * * *`     | Every day at 9 AM                |
+| `*/15 * * * *`  | Every 15 minutes                 |
+| `0 0 * * 0`     | Every Sunday at midnight         |
+| `0 12 1 * *`    | First day of every month at noon |
+| `30 14 * * 1-5` | Weekdays at 2:30 PM              |
+
+## 3. Choosing the Right Timezone
+
+All schedules require a timezone to ensure your HTTP requests run at the correct local time. Use IANA timezone identifiers for accuracy:
+
+```typescript
+// Examples of timezone usage
+const schedule = await cronhost.createSchedule({
+  name: "East Coast Business Hours",
+  cronExpression: "0 9 * * 1-5", // Weekdays at 9 AM
+  timezone: "America/New_York", // Handles EST/EDT automatically
+  endpoint: "https://api.example.com/check",
+});
+```
+
+<Note>
+  **Need help choosing a timezone?** Check out our [Timezone
+  Reference](/timezones) for a complete list of supported IANA identifiers and
+  regional examples.
+</Note>
 
 ## 4. Monitor Your Schedule
 
@@ -127,16 +148,16 @@ curl -H "x-api-key: YOUR_API_KEY" \
 
 ```typescript
 // Get schedule details
-const schedule = await cronhost.getSchedule('SCHEDULE_ID');
-console.log('Next run:', schedule.nextRunAtUtc);
+const schedule = await cronhost.getSchedule("SCHEDULE_ID");
+console.log("Next run:", schedule.nextRunAtUtc);
 
 // Get recent jobs
 const jobs = await cronhost.getJobs({
-  scheduleId: 'SCHEDULE_ID',
-  limit: 10
+  scheduleId: "SCHEDULE_ID",
+  limit: 10,
 });
 
-jobs.forEach(job => {
+jobs.forEach((job) => {
   console.log(`Job ${job.id}: ${job.status} - ${job.completedAtUtc}`);
 });
 ```
@@ -149,13 +170,13 @@ Monitor your API endpoints and get notified of downtime:
 
 ```typescript
 const healthCheck = await cronhost.createSchedule({
-  name: 'API Health Monitor',
-  cronExpression: '*/5 * * * *', // Every 5 minutes
-  timezone: 'UTC',
-  endpoint: 'https://your-api.com/health',
-  httpMethod: 'GET',
+  name: "API Health Monitor",
+  cronExpression: "*/5 * * * *", // Every 5 minutes
+  timezone: "UTC",
+  endpoint: "https://your-api.com/health",
+  httpMethod: "GET",
   maxRetries: 2,
-  timeoutSeconds: 10
+  timeoutSeconds: 10,
 });
 ```
 
@@ -165,17 +186,17 @@ Send scheduled webhooks to external services:
 
 ```typescript
 const weeklyReport = await cronhost.createSchedule({
-  name: 'Weekly Report Webhook',
-  cronExpression: '0 9 * * 1', // Every Monday at 9 AM
-  timezone: 'America/New_York',
-  endpoint: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK',
-  httpMethod: 'POST',
+  name: "Weekly Report Webhook",
+  cronExpression: "0 9 * * 1", // Every Monday at 9 AM
+  timezone: "America/New_York",
+  endpoint: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+  httpMethod: "POST",
   body: JSON.stringify({
-    text: 'Weekly report is ready for review!'
+    text: "Weekly report is ready for review!",
   }),
   headers: {
-    'Content-Type': 'application/json'
-  }
+    "Content-Type": "application/json",
+  },
 });
 ```
 
@@ -185,16 +206,16 @@ Schedule batch jobs for data processing:
 
 ```typescript
 const dailyBackup = await cronhost.createSchedule({
-  name: 'Daily Database Backup',
-  cronExpression: '0 2 * * *', // Every day at 2 AM
-  timezone: 'UTC',
-  endpoint: 'https://your-api.com/backup/trigger',
-  httpMethod: 'POST',
+  name: "Daily Database Backup",
+  cronExpression: "0 2 * * *", // Every day at 2 AM
+  timezone: "UTC",
+  endpoint: "https://your-api.com/backup/trigger",
+  httpMethod: "POST",
   headers: {
-    'Authorization': 'Bearer YOUR_TOKEN'
+    Authorization: "Bearer YOUR_TOKEN",
   },
   maxRetries: 1,
-  timeoutSeconds: 300 // 5 minutes for longer operations
+  timeoutSeconds: 300, // 5 minutes for longer operations
 });
 ```
 
@@ -203,9 +224,9 @@ const dailyBackup = await cronhost.createSchedule({
 ### Update a Schedule
 
 ```typescript
-const updated = await cronhost.updateSchedule('SCHEDULE_ID', {
-  cronExpression: '0 */2 * * *', // Change to every 2 hours
-  maxRetries: 5
+const updated = await cronhost.updateSchedule("SCHEDULE_ID", {
+  cronExpression: "0 */2 * * *", // Change to every 2 hours
+  maxRetries: 5,
 });
 ```
 
@@ -213,18 +234,18 @@ const updated = await cronhost.updateSchedule('SCHEDULE_ID', {
 
 ```typescript
 // Disable schedule
-await cronhost.toggleSchedule('SCHEDULE_ID', false);
+await cronhost.toggleSchedule("SCHEDULE_ID", false);
 
 // Re-enable later
-await cronhost.toggleSchedule('SCHEDULE_ID', true);
+await cronhost.toggleSchedule("SCHEDULE_ID", true);
 ```
 
 ### Manual Trigger
 
 ```typescript
 // Trigger immediately for testing
-const job = await cronhost.triggerSchedule('SCHEDULE_ID');
-console.log('Triggered job:', job.id);
+const job = await cronhost.triggerSchedule("SCHEDULE_ID");
+console.log("Triggered job:", job.id);
 ```
 
 ## 7. Error Handling
@@ -236,13 +257,13 @@ try {
   const schedule = await cronhost.createSchedule({
     // ... schedule data
   });
-  console.log('Success!', schedule.id);
+  console.log("Success!", schedule.id);
 } catch (error) {
-  console.error('Failed to create schedule:', error.message);
-  
+  console.error("Failed to create schedule:", error.message);
+
   // Check for specific error types
-  if (error.message.includes('Invalid cron expression')) {
-    console.log('Please check your cron syntax');
+  if (error.message.includes("Invalid cron expression")) {
+    console.log("Please check your cron syntax");
   }
 }
 ```
@@ -250,11 +271,7 @@ try {
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card
-    title="Explore the API"
-    icon="link"
-    href="/api-reference/introduction"
-  >
+  <Card title="Explore the API" icon="link" href="/api-reference/introduction">
     Dive deeper into all available endpoints
   </Card>
   <Card
@@ -271,11 +288,7 @@ try {
   >
     Monitor execution history and debug issues
   </Card>
-  <Card
-    title="Best Practices"
-    icon="lightbulb"
-    href="/development"
-  >
+  <Card title="Best Practices" icon="lightbulb" href="/development">
     Learn tips for production usage
   </Card>
 </CardGroup>
@@ -287,4 +300,4 @@ try {
 - **Support**: Email us at [help@cronho.st](mailto:help@cronho.st)
 - **Status**: Check [status.cronho.st](https://status.cronho.st) for service status
 
-You're now ready to start scheduling HTTP requests with Cronhost! 🚀
+You're now ready to start scheduling HTTP requests with cronhost! 🚀
